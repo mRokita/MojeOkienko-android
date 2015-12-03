@@ -3,13 +3,13 @@
     <group
         android:checkableBehavior="single">
         <item
-            android:id="@+id/drawet_ticket"
+            android:id="@+id/drawer_ticket"
+            android:checked="true"
             android:icon="@drawable/ic_menu_ticket"
             android:title="@string/drawer_ticket"/>
 
         <item
             android:id="@+id/drawer_map"
-            android:checked="true"
             android:icon="@android:drawable/ic_dialog_map"
             android:title="@string/drawer_map"/>
 
