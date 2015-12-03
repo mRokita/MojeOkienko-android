@@ -12,13 +12,21 @@ public class PrefsActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prefs);
+        setupToolbar();
+        setupFragment();
+    }
+
+    private void setupFragment(){
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fl_content, new PrefsFragment())
+                .commit();
+    }
+
+    private void setupToolbar(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setTitle(getString(R.string.drawer_settings));
-        getFragmentManager().beginTransaction()
-                .replace(R.id.fl_content, new PrefsFragment())
-                .commit();
         View statusBar = findViewById(R.id.statusbar);
         statusBar.setVisibility(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT ?
                 View.VISIBLE : View.GONE);

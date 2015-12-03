@@ -10,17 +10,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.MapView;
 
 public class MojeOkienkoActivity extends AppCompatActivity {
-    private GoogleMap map;
+    private MapView mMap;
     private Toolbar mToolbar;
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
@@ -29,24 +26,35 @@ public class MojeOkienkoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mOfficeMapFragment = new OfficeMapFragment();
         setContentView(R.layout.activity_moje_okienko);
+        setupToolbar();
+        setupMap();
+        setupFragment();
+        setupNavigationView();
+    }
+
+    private void setupToolbar(){
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+        View statusBar = findViewById(R.id.statusbar);
+        statusBar.setVisibility(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT ?
+                View.VISIBLE : View.GONE);
+    }
+    
+    private void setupMap(){
+        mMap = new MapView(this);
+        mOfficeMapFragment = new OfficeMapFragment();
+        mOfficeMapFragment.setMap(mMap, this);
+        mOfficeMapFragment.createMap();
         if(getSupportActionBar()!=null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
             setupDrawer();
         }
-        View statusBar = findViewById(R.id.statusbar);
-        statusBar.setVisibility(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT ?
-                View.VISIBLE : View.GONE);
-        setupFragment();
-        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-        setupNavigationView();
     }
 
     private void setupNavigationView(){
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -60,24 +68,9 @@ public class MojeOkienkoActivity extends AppCompatActivity {
                         addFragment(fragment);
                         return true;
                     case R.id.drawer_map:
-                        if(mOfficeMapFragment==null){
-                            mOfficeMapFragment = new OfficeMapFragment();
-                            mOfficeMapFragment.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                                @Override
-                                public boolean onMarkerClick(Marker marker) {
-                                    Log.e("MARKER", mOfficeMapFragment.getOfficeOfMarker(marker).getName());
-                                    mOfficeMapFragment.showFab();
-                                    return false;
-                                }
-                            });
-                            mOfficeMapFragment.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                                @Override
-                                public void onMapClick(LatLng latLng) {
-                                    mOfficeMapFragment.hideFab();
-                                }
-                            });
+                        if(mOfficeMapFragment == null || mMap == null) {
+                            setupMap();
                         }
-                        mOfficeMapFragment.initMarkers(Api.getOffices());
                         fragment = mOfficeMapFragment;
                         addFragment(fragment);
                         return true;
@@ -118,7 +111,7 @@ public class MojeOkienkoActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                        .replace(R.id.fl_content, fragment)
-                .commit();
+                       .commit();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

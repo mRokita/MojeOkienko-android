@@ -3,11 +3,12 @@ package pl.mrokita.mojeokienko;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Api {
-    public static class Office {
+    public static class Office implements Serializable{
         private int mId=0;
         private String mName="Urząd Dzielnicy Żoliborz";
         private String mPhone="666 666 666";
@@ -39,7 +40,7 @@ public class Api {
     }
 
     public static List<Office> getOffices() {
-        List<Office> ret = new ArrayList<Office>();
+        List<Office> ret = new ArrayList<>();
         ret.add(new Office());
         return ret;
     }
