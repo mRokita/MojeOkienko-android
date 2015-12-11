@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MojeOkienkoActivity"
+            android:name=".activity.MojeOkienko"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PrefsActivity" >
+            android:name=".activity.Preferences" >
 
         </activity>
         <meta-data
