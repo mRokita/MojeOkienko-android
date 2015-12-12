@@ -10,18 +10,20 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.maps.MapView;
 
+import pl.mrokita.mojeokienko.R;
 import pl.mrokita.mojeokienko.fragment.NewTicketFragment;
 import pl.mrokita.mojeokienko.fragment.OfficeMapFragment;
-import pl.mrokita.mojeokienko.R;
 
 public class MojeOkienko extends AppCompatActivity {
     private final String STATE_FRAGMENT = "lastFragment";
+    private final String STATE_MARKER = "lastMarkerId";
     private MapView mMap;
     private Toolbar mToolbar;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -34,19 +36,25 @@ public class MojeOkienko extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_moje_okienko);
-        setupToolbar();
-        setupMap();
-        setupFragment();
-        setupNavigationView();
         mCurrentFragment = R.id.drawer_ticket;
-        if(savedInstanceState!=null)
+        String lastMarkerId = null;
+        if(savedInstanceState!=null) {
             mCurrentFragment = savedInstanceState.getInt(STATE_FRAGMENT);
+            lastMarkerId = savedInstanceState.getString(STATE_MARKER);
+            Log.e("FRAG_ID", String.valueOf(R.id.drawer_map == mCurrentFragment));
+        }
+        setupToolbar();
+        setupMap(lastMarkerId);
+        setupNavigationView();
+        Log.e("FRAG_ID", String.valueOf(R.id.drawer_map == mCurrentFragment));
         selectMenuItem(mCurrentFragment);
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState){
         savedInstanceState.putInt(STATE_FRAGMENT, mCurrentFragment);
+        savedInstanceState.putString(STATE_MARKER, mOfficeMapFragment != null ?
+                mOfficeMapFragment.getCurrentMarkerId() : null);
         super.onSaveInstanceState(savedInstanceState);
     }
     private void setupToolbar(){
@@ -57,10 +65,10 @@ public class MojeOkienko extends AppCompatActivity {
                 View.VISIBLE : View.GONE);
     }
     
-    private void setupMap(){
+    private void setupMap(String lastMarkerId){
         mMap = new MapView(this);
         mOfficeMapFragment = new OfficeMapFragment();
-        putMapToOfficeMapFragment(mOfficeMapFragment);
+        putMapToOfficeMapFragment(mOfficeMapFragment, lastMarkerId);
         mOfficeMapFragment.createMap();
         if(getSupportActionBar()!=null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -69,12 +77,8 @@ public class MojeOkienko extends AppCompatActivity {
         }
     }
 
-    public void putMapToOfficeMapFragment(OfficeMapFragment fragment){
-        fragment.setMap(mMap, this);
-    }
-
-    public MapView getMap(){
-        return mMap;
+    public void putMapToOfficeMapFragment(OfficeMapFragment fragment, String lastMarkerId){
+        fragment.setData(mMap, this, lastMarkerId);
     }
 
     private void setupNavigationView(){
@@ -99,7 +103,7 @@ public class MojeOkienko extends AppCompatActivity {
                 return true;
             case R.id.drawer_map:
                 if(mOfficeMapFragment == null || mMap == null) {
-                    setupMap();
+                    setupMap(null);
                 }
                 fragment = mOfficeMapFragment;
                 addFragment(fragment, id);

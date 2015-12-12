@@ -2,9 +2,9 @@ package pl.mrokita.mojeokienko.fragment;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,15 +23,17 @@ import java.util.List;
 import pl.mrokita.mojeokienko.Api;
 import pl.mrokita.mojeokienko.R;
 import pl.mrokita.mojeokienko.activity.MojeOkienko;
+import pl.mrokita.mojeokienko.activity.OfficeInfo;
 import pl.mrokita.mojeokienko.asynctask.OfficesLoader;
 
 public class OfficeMapFragment extends Fragment implements Api.OnOfficesLoadedListener{
     private FloatingActionButton mFab;
     private RelativeLayout mLayout;
     private MapView mMap;
-    private int mCount = 0;
     private Context mContext;
-    private HashMap<Marker, Api.Office> mMarkerOffices;
+    private String mCurrentMarkerId;
+    private HashMap<String, Api.Office> mIdToOffice;
+    private HashMap<Marker, Api.Office> mMarkerToOffice;
     /* Dodawanie przycisku informacji */
     private void addFabToLayout(View v, int marginBottom, int marginRight){
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -49,14 +51,14 @@ public class OfficeMapFragment extends Fragment implements Api.OnOfficesLoadedLi
         mFab.show();
     }
 
-    public void setMap(MapView map, Context context){
+    public void setData(MapView map, Context context, String lastMarkerId){
         this.mMap = map;
         this.mContext = context;
+        this.mCurrentMarkerId = lastMarkerId;
     }
     /* Inicjalizacja mapy */
     public void createMap(){
         /* Tworzenie głównego layoutu */
-        mCount++;
         mLayout = new RelativeLayout(mContext);
         if (((View)mMap).getParent()==null){
             mLayout.addView(mMap, new RelativeLayout.LayoutParams(-1, -1));
@@ -64,6 +66,14 @@ public class OfficeMapFragment extends Fragment implements Api.OnOfficesLoadedLi
         /* Floating Action Button */
         mFab = (FloatingActionButton) LayoutInflater.from(mContext)
                 .inflate(R.layout.map_info_button, null);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OfficeMapFragment.this.getActivity(), OfficeInfo.class);
+                intent.putExtra("office", mIdToOffice.get(mCurrentMarkerId));
+                startActivity(intent);
+            }
+        });
         addFabToLayout(mFab, 10, 10);
         mFab.hide();
         /* Konfiguracja mapy */
@@ -72,7 +82,7 @@ public class OfficeMapFragment extends Fragment implements Api.OnOfficesLoadedLi
         setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                Log.d("MARKER", OfficeMapFragment.this.getOfficeOfMarker(marker).getName());
+                OfficeMapFragment.this.setCurrentMarkerId(mMarkerToOffice.get(marker).getId());
                 OfficeMapFragment.this.showFab();
                 return false;
             }
@@ -80,6 +90,7 @@ public class OfficeMapFragment extends Fragment implements Api.OnOfficesLoadedLi
         setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
+                OfficeMapFragment.this.setCurrentMarkerId(null);
                 OfficeMapFragment.this.hideFab();
             }
         });
@@ -89,7 +100,7 @@ public class OfficeMapFragment extends Fragment implements Api.OnOfficesLoadedLi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle bundle) {
         if(mMap == null)
-            ((MojeOkienko) getActivity()).putMapToOfficeMapFragment(this);
+            ((MojeOkienko) getActivity()).putMapToOfficeMapFragment(this, mCurrentMarkerId);
         mMap.onResume();
         return mLayout;
     }
@@ -106,14 +117,21 @@ public class OfficeMapFragment extends Fragment implements Api.OnOfficesLoadedLi
             }
         });
     }
+
     /* Inicjalizacja markerów */
     public void initMarkers(final List<Api.Office> offices){
-        mMarkerOffices = new HashMap<>();
+        mMarkerToOffice = new HashMap<>();
+        mIdToOffice = new HashMap<>();
         mMap.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                for (Api.Office office : offices)
-                    mMarkerOffices.put(googleMap.addMarker(office.getMarkerOptions()), office);
+                for (Api.Office office : offices) {
+                    Marker m = googleMap.addMarker(office.getMarkerOptions());
+                    office.setMarker(m);
+                    mMarkerToOffice.put(m, office);
+                    mIdToOffice.put(office.getId(), office);
+                }
+                selectMarker(mCurrentMarkerId);
             }
         });
     }
@@ -123,7 +141,6 @@ public class OfficeMapFragment extends Fragment implements Api.OnOfficesLoadedLi
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 googleMap.setOnMarkerClickListener(listener);
-                Log.e("set", "set");
             }
         });
     }
@@ -138,7 +155,27 @@ public class OfficeMapFragment extends Fragment implements Api.OnOfficesLoadedLi
     }
 
     public Api.Office getOfficeOfMarker(Marker marker){
-        return mMarkerOffices.get(marker);
+        return mMarkerToOffice.get(marker);
+    }
+
+    public Api.Office getOffice(String officeId){
+        return mIdToOffice.get(officeId);
+    }
+
+    public void setCurrentMarkerId(String officeId){
+        mCurrentMarkerId = officeId;
+    }
+
+    public String getCurrentMarkerId(){
+        return mCurrentMarkerId;
+    }
+
+    public void selectMarker(String officeId){
+        if(officeId!=null) {
+            Marker m = (mIdToOffice.get(officeId).getMarker());
+            m.showInfoWindow();
+            showFab();
+        }
     }
 
     @Override

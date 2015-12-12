@@ -1,6 +1,10 @@
 package pl.mrokita.mojeokienko;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONArray;
@@ -10,7 +14,6 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -51,11 +54,12 @@ public class Api {
         return response.toString();
     }
 
-    public static class Office implements Serializable{
+    public static class Office implements Parcelable {
         private String mId;
         private String mName;
         private String mPhone;
         private String mStreet;
+        private Marker mMarker;
         private String mNumber;
         private double lat;
         private double lng;
@@ -71,6 +75,29 @@ public class Api {
             lng = getJsonDouble(data, "lng", 0d);
             mDescription = getJsonString(data, "desc", "");
         }
+
+        public Office(Parcel in){
+            mId = in.readString();
+            mName = in.readString();
+            mPhone = in.readString();
+            mStreet = in.readString();
+            mNumber = in.readString();
+            lat = in.readDouble();
+            lng = in.readDouble();
+            mDescription = in.readString();
+        }
+
+        public static final Parcelable.Creator<Office> CREATOR
+                = new Parcelable.Creator<Office>() {
+            public Office createFromParcel(Parcel in) {
+                return new Office(in);
+            }
+
+            public Office[] newArray(int size) {
+                return new Office[size];
+            }
+        };
+
         public String getId(){
             return mId;
         }
@@ -86,11 +113,34 @@ public class Api {
         public LatLng getLatLng(){
             return new LatLng(lat, lng);
         }
+        public void setMarker(Marker marker){
+            mMarker = marker;
+        }
+        public Marker getMarker(){
+            return mMarker;
+        }
         public MarkerOptions getMarkerOptions(){
             return new MarkerOptions()
                                     .position(new LatLng(lat, lng))
                                     .title(mName)
                                     .snippet(String.format("%s %s", mStreet, mNumber));
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(mId);
+            dest.writeString(mName);
+            dest.writeString(mPhone);
+            dest.writeString(mStreet);
+            dest.writeString(mNumber);
+            dest.writeDouble(lat);
+            dest.writeDouble(lng);
+            dest.writeString(mDescription);
         }
     }
 
