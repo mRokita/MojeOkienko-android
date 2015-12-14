@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.google.android.gms.maps.MapView;
 
@@ -43,6 +44,8 @@ public class MojeOkienko extends AppCompatActivity {
             lastMarkerId = savedInstanceState.getString(STATE_MARKER);
             Log.e("FRAG_ID", String.valueOf(R.id.drawer_map == mCurrentFragment));
         }
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setupToolbar();
         setupMap(lastMarkerId);
         setupNavigationView();

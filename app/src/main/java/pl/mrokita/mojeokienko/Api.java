@@ -64,6 +64,7 @@ public class Api {
         private double lat;
         private double lng;
         private String mDescription;
+        private String mImageUrl;
 
         public Office(JSONObject data){
             mName = getJsonString(data, "name", "");
@@ -74,6 +75,7 @@ public class Api {
             lat = getJsonDouble(data, "lat", 0d);
             lng = getJsonDouble(data, "lng", 0d);
             mDescription = getJsonString(data, "desc", "");
+            mImageUrl = getJsonString(data, "img", "");
         }
 
         public Office(Parcel in){
@@ -85,6 +87,7 @@ public class Api {
             lat = in.readDouble();
             lng = in.readDouble();
             mDescription = in.readString();
+            mImageUrl = in.readString();
         }
 
         public static final Parcelable.Creator<Office> CREATOR
@@ -119,6 +122,9 @@ public class Api {
         public Marker getMarker(){
             return mMarker;
         }
+        public String getImageUrl() {
+            return mImageUrl;
+        }
         public MarkerOptions getMarkerOptions(){
             return new MarkerOptions()
                                     .position(new LatLng(lat, lng))
@@ -141,6 +147,7 @@ public class Api {
             dest.writeDouble(lat);
             dest.writeDouble(lng);
             dest.writeString(mDescription);
+            dest.writeString(mImageUrl);
         }
     }
 
