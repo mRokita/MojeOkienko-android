@@ -29,6 +29,8 @@ public class OfficeInfo extends AppCompatActivity {
         setupToolbar();
         getSupportActionBar().setTitle(mOffice.getName());
         ((TextView)findViewById(R.id.telefon)).setText(mOffice.getPhone());
+        ((TextView)findViewById(R.id.adres)).setText(String.format("%s %s", mOffice.getStreet(), mOffice.getNumber()));
+        ((TextView)findViewById(R.id.www)).setText(mOffice.getWebsite());
         new DownloadImageTask((ImageView) findViewById(R.id.img_header))
                 .execute(mOffice.getImageUrl());
     }

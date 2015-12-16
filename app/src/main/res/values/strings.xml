@@ -9,4 +9,8 @@
     <string name="drawer_close">Close navigation drawer</string>
     <string name="drawer_ticket">Numerek</string>
     <string name="telefon">Telefon</string>
+    <string name="adres">Adres</string>
+    <string name="www">WWW</string>
+    <string name="open_hours">Godziny otwarcia</string>
+    <string name="queues">Kolejki</string>
 </resources>
