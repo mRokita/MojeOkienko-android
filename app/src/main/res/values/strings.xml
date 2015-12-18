@@ -13,4 +13,6 @@
     <string name="label_www">WWW</string>
     <string name="label_open_hours">Godziny otwarcia</string>
     <string name="label_queues">Kolejki</string>
+    <string name="copy">Kopiuj</string>
+    <string name="toast_copy">Skopiowano do schowka</string>
 </resources>

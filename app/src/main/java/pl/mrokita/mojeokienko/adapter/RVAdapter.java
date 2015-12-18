@@ -1,8 +1,10 @@
 package pl.mrokita.mojeokienko.adapter;
 
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Vibrator;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import pl.mrokita.mojeokienko.Api;
 import pl.mrokita.mojeokienko.R;
@@ -79,7 +82,10 @@ public class RVAdapter  extends RecyclerView.Adapter<RVAdapter.CustomViewHolder>
             case 1:
                 con = String.format("%s %s", mOffice.getStreet(), mOffice.getNumber());
                 intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                Uri.parse(String.format("google.navigation:q=" + String.valueOf(mOffice.getLatLng().latitude) + "," + String.valueOf(mOffice.getLatLng().longitude))));
+                                Uri.parse(String.format("google.navigation:q=" +
+                                                        String.valueOf(mOffice.getLatLng().latitude)
+                                                        + ","
+                                                        + String.valueOf(mOffice.getLatLng().longitude))));
                 break;
             case 2:
                 con = mOffice.getWebsite();
@@ -93,10 +99,28 @@ public class RVAdapter  extends RecyclerView.Adapter<RVAdapter.CustomViewHolder>
                 con = "Łącznie 10 osób";
                 break;
         }
-        container.setOnClickListener(new OnClickIntent(intent));
+        if(intent!=null) {
+            container.setOnClickListener(new OnClickIntent(intent));
+        }
+        final String toCopy = con;
+        container.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                ClipboardManager clipboard = (android.content.ClipboardManager)
+                                               mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                android.content.ClipData clip = android.content.ClipData.newPlainText("Copied Text",
+                                                                                            toCopy);
+                clipboard.setPrimaryClip(clip);
+                Vibrator vi = (Vibrator)mContext.getSystemService(Context.VIBRATOR_SERVICE);
+                vi.vibrate(100);
+                Toast.makeText(mContext,
+                               mContext.getResources().getString(R.string.toast_copy),
+                               Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });
         customViewHolder.content.setText(con);
     }
-
     @Override
     public int getItemCount() {
         return 5;

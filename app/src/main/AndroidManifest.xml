@@ -3,6 +3,7 @@
     package="pl.mrokita.mojeokienko" >
     <uses-permission android:name="com.google.android.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <application
         android:fullBackupContent="false"
         android:allowBackup="true"
