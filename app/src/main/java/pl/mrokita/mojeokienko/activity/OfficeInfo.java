@@ -6,17 +6,19 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.io.InputStream;
 
 import pl.mrokita.mojeokienko.Api;
 import pl.mrokita.mojeokienko.R;
+import pl.mrokita.mojeokienko.adapter.RVAdapter;
 
 public class OfficeInfo extends AppCompatActivity {
     Api.Office mOffice;
@@ -28,9 +30,10 @@ public class OfficeInfo extends AppCompatActivity {
         mOffice = i.getExtras().getParcelable("office");
         setupToolbar();
         getSupportActionBar().setTitle(mOffice.getName());
-        ((TextView)findViewById(R.id.telefon)).setText(mOffice.getPhone());
-        ((TextView)findViewById(R.id.adres)).setText(String.format("%s %s", mOffice.getStreet(), mOffice.getNumber()));
-        ((TextView)findViewById(R.id.www)).setText(mOffice.getWebsite());
+        RecyclerView rv = (RecyclerView) findViewById(R.id.rv);
+        rv.setHasFixedSize(true);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        rv.setAdapter(new RVAdapter(this, mOffice));
         new DownloadImageTask((ImageView) findViewById(R.id.img_header))
                 .execute(mOffice.getImageUrl());
     }
