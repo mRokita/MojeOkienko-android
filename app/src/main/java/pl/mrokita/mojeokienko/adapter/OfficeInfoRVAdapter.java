@@ -16,8 +16,9 @@ import android.widget.Toast;
 
 import pl.mrokita.mojeokienko.Api;
 import pl.mrokita.mojeokienko.R;
+import pl.mrokita.mojeokienko.activity.QueuesInfo;
 
-public class RVAdapter  extends RecyclerView.Adapter<RVAdapter.CustomViewHolder> {
+public class OfficeInfoRVAdapter extends RecyclerView.Adapter<OfficeInfoRVAdapter.CustomViewHolder> {
     private Api.Office mOffice;
     private Context mContext;
     private int[] imgResources = {R.drawable.ic_phone_black_36dp,
@@ -32,7 +33,7 @@ public class RVAdapter  extends RecyclerView.Adapter<RVAdapter.CustomViewHolder>
                                    R.string.label_open_hours,
                                    R.string.label_queues};
 
-    public RVAdapter(Context context, Api.Office office) {
+    public OfficeInfoRVAdapter(Context context, Api.Office office) {
         this.mOffice = office;
         this.mContext = context;
     }
@@ -97,6 +98,8 @@ public class RVAdapter  extends RecyclerView.Adapter<RVAdapter.CustomViewHolder>
                 break;
             case 4:
                 con = "Łącznie 10 osób";
+                intent = new Intent(mContext, QueuesInfo.class);
+                intent.putExtra("officeId", mOffice.getId());
                 break;
         }
         if(intent!=null) {

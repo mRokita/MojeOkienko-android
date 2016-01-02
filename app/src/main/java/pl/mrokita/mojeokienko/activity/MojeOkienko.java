@@ -10,8 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -42,14 +40,10 @@ public class MojeOkienko extends AppCompatActivity {
         if(savedInstanceState!=null) {
             mCurrentFragment = savedInstanceState.getInt(STATE_FRAGMENT);
             lastMarkerId = savedInstanceState.getString(STATE_MARKER);
-            Log.e("FRAG_ID", String.valueOf(R.id.drawer_map == mCurrentFragment));
         }
-        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setupToolbar();
         setupMap(lastMarkerId);
         setupNavigationView();
-        Log.e("FRAG_ID", String.valueOf(R.id.drawer_map == mCurrentFragment));
         selectMenuItem(mCurrentFragment);
     }
 
@@ -61,6 +55,9 @@ public class MojeOkienko extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
     }
     private void setupToolbar(){
+
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         View statusBar = findViewById(R.id.statusbar);
@@ -99,6 +96,10 @@ public class MojeOkienko extends AppCompatActivity {
 
     private boolean selectMenuItem(int id){
         Fragment fragment;
+        if(id!=R.id.drawer_settings)
+            mNavigationView.getMenu().findItem(id).setChecked(true);
+        else
+            mNavigationView.getMenu().findItem(mCurrentFragment).setChecked(true);
         switch (id) {
             case R.id.drawer_ticket:
                 fragment = new NewTicketFragment();
@@ -153,22 +154,12 @@ public class MojeOkienko extends AppCompatActivity {
 
         mCurrentFragment = id;
     }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_moje_okienko, menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 }

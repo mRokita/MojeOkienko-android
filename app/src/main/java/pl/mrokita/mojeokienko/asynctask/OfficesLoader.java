@@ -12,6 +12,7 @@ public class OfficesLoader extends AsyncTask<Void, Void, List<Api.Office>>{
     public OfficesLoader(Api.OnOfficesLoadedListener listener){
         this.mListener = listener;
     }
+
     @Override
     protected List<Api.Office> doInBackground(Void... params) {
         try {

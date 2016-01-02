@@ -28,9 +28,18 @@ public class Api {
             return def;
         }
     }
+
     private static Double getJsonDouble(JSONObject obj, String key, Double def){
         try {
             return obj.getDouble(key);
+        } catch (JSONException e){
+            return def;
+        }
+    }
+
+    private static Integer getJsonInteger(JSONObject obj, String key, Integer def){
+        try {
+            return obj.getInt(key);
         } catch (JSONException e){
             return def;
         }
@@ -54,6 +63,37 @@ public class Api {
         return response.toString();
     }
 
+    public static class WindowQueue {
+        private Integer mCurrentNumber;
+        private String mOfficeId;
+        private String mWindowLetter;
+        private String mWindowName;
+        private Integer mClientsInQueue;
+        public WindowQueue(JSONObject data){
+            mCurrentNumber = getJsonInteger(data, "aktualnyNumer", null);
+            mOfficeId = getJsonString(data, "idUrzedu", null);
+            mWindowLetter = getJsonString(data, "literaGrupy", null);
+            mWindowName = getJsonString(data, "nazwaGrupy", null);
+            mClientsInQueue = getJsonInteger(data, "liczbaKlwKolejce", null);
+        }
+
+        public Integer getCurrentNumber(){
+            return mCurrentNumber;
+        }
+        public String getOfficeId(){
+            return mOfficeId;
+        }
+        public String getWindowLetter(){
+            return mWindowLetter;
+        }
+        public String getWindowName(){
+            return mWindowName;
+        }
+        public Integer getClientsInQueue(){
+            return mClientsInQueue;
+        }
+    }
+
     public static class Office implements Parcelable {
         private String mId;
         private String mName;
@@ -67,16 +107,16 @@ public class Api {
         private String mImageUrl;
         private String mWebsite;
         public Office(JSONObject data){
-            mName = getJsonString(data, "name", "");
-            mPhone = getJsonString(data, "phone", "");
-            mStreet = getJsonString(data, "street", "");
-            mNumber = getJsonString(data, "number", "");
-            mId = getJsonString(data, "id", "");
+            mName = getJsonString(data, "name", null);
+            mPhone = getJsonString(data, "phone", null);
+            mStreet = getJsonString(data, "street", null);
+            mNumber = getJsonString(data, "number", null);
+            mId = getJsonString(data, "id", null);
             lat = getJsonDouble(data, "lat", 0d);
             lng = getJsonDouble(data, "lng", 0d);
-            mDescription = getJsonString(data, "desc", "");
-            mImageUrl = getJsonString(data, "img", "");
-            mWebsite = getJsonString(data, "www", "");
+            mDescription = getJsonString(data, "desc", null);
+            mImageUrl = getJsonString(data, "img", null);
+            mWebsite = getJsonString(data, "www", null);
         }
 
         public Office(Parcel in){
@@ -163,8 +203,21 @@ public class Api {
         }
     }
 
+    public interface OnWindowQueuesLoadedListener{
+        void onWindowQueuesLoaded(List<WindowQueue> windowQueues);
+    }
+
     public interface OnOfficesLoadedListener{
         void onOfficesLoaded(List<Office> offices);
+    }
+
+    public static List<WindowQueue> getWindowQueues(String officeId) throws IOException, JSONException {
+        List<WindowQueue> ret = new ArrayList<>();
+        JSONArray res = new JSONArray(getResponse("getQueues/"+officeId));
+        for(int i=0; i<res.length(); i++){
+            ret.add(new WindowQueue(res.getJSONObject(i)));
+        }
+        return ret;
     }
 
     public static List<Office> getOffices() throws IOException, JSONException {

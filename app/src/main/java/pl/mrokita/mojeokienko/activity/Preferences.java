@@ -16,8 +16,6 @@ public class Preferences extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prefs);
-        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setupToolbar();
         setupFragment();
     }
@@ -29,6 +27,8 @@ public class Preferences extends AppCompatActivity {
     }
 
     private void setupToolbar(){
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
