@@ -3,19 +3,19 @@
     <group
         android:checkableBehavior="single">
         <item
-            android:id="@+id/drawer_ticket"
+            android:id="@+id/drawer_offices"
             android:checked="true"
-            android:icon="@drawable/ic_menu_ticket"
-            android:title="@string/drawer_ticket"/>
+            android:icon="@drawable/ic_gavel_grey600_24dp"
+            android:title="@string/drawer_offices"/>
 
         <item
             android:id="@+id/drawer_map"
-            android:icon="@android:drawable/ic_dialog_map"
+            android:icon="@drawable/ic_map_marker_grey600_24dp"
             android:title="@string/drawer_map"/>
 
         <item
             android:id="@+id/drawer_settings"
-            android:icon="@android:drawable/ic_menu_preferences"
+            android:icon="@drawable/ic_settings_grey600_24dp"
             android:title="@string/drawer_settings"/>
 
     </group>

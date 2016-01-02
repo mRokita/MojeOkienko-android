@@ -17,13 +17,16 @@ import pl.mrokita.mojeokienko.R;
  */
 public class QueuesInfoRVAdapter extends RecyclerView.Adapter<QueuesInfoRVAdapter.CustomViewHolder>{
     private Context mContext;
+    private boolean isLocked = false;
     private List<Api.WindowQueue> mWindowQueues=null;
     public QueuesInfoRVAdapter(Context context){
         mContext = context;
     }
 
     public void setWindowQueues(List<Api.WindowQueue> windowQueues){
+        isLocked = true;
         mWindowQueues = windowQueues;
+        isLocked = false;
         notifyDataSetChanged();
     }
     @Override
@@ -38,12 +41,13 @@ public class QueuesInfoRVAdapter extends RecyclerView.Adapter<QueuesInfoRVAdapte
         Api.WindowQueue windowQueue = mWindowQueues.get(i);
         customViewHolder.letter.setText(windowQueue.getWindowLetter());
         customViewHolder.title.setText(windowQueue.getWindowName());
-        customViewHolder.length.setText(windowQueue.getClientsInQueue().toString());
+        customViewHolder.length.setText(String.format("Liczba osób w kolejce: %d\nAktualny numer: 0",
+                                                                  windowQueue.getClientsInQueue()));
     }
 
     @Override
     public int getItemCount() {
-        return mWindowQueues==null ? 0: mWindowQueues.size();
+        return (mWindowQueues==null || !isLocked) ? 0: mWindowQueues.size();
     }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder{

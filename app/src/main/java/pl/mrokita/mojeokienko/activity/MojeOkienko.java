@@ -18,6 +18,7 @@ import com.google.android.gms.maps.MapView;
 
 import pl.mrokita.mojeokienko.R;
 import pl.mrokita.mojeokienko.fragment.NewTicketFragment;
+import pl.mrokita.mojeokienko.fragment.OfficeListFragment;
 import pl.mrokita.mojeokienko.fragment.OfficeMapFragment;
 
 public class MojeOkienko extends AppCompatActivity {
@@ -35,7 +36,7 @@ public class MojeOkienko extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_moje_okienko);
-        mCurrentFragment = R.id.drawer_ticket;
+        mCurrentFragment = R.id.drawer_offices;
         String lastMarkerId = null;
         if(savedInstanceState!=null) {
             mCurrentFragment = savedInstanceState.getInt(STATE_FRAGMENT);
@@ -45,6 +46,12 @@ public class MojeOkienko extends AppCompatActivity {
         setupMap(lastMarkerId);
         setupNavigationView();
         selectMenuItem(mCurrentFragment);
+        mDrawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                MojeOkienko.this.mDrawerLayout.closeDrawers();
+            }
+        });
     }
 
     @Override
@@ -54,8 +61,8 @@ public class MojeOkienko extends AppCompatActivity {
                 mOfficeMapFragment.getCurrentMarkerId() : null);
         super.onSaveInstanceState(savedInstanceState);
     }
-    private void setupToolbar(){
 
+    private void setupToolbar(){
         if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -100,9 +107,13 @@ public class MojeOkienko extends AppCompatActivity {
             mNavigationView.getMenu().findItem(id).setChecked(true);
         else
             mNavigationView.getMenu().findItem(mCurrentFragment).setChecked(true);
-        switch (id) {
+        switch (id) {/*
             case R.id.drawer_ticket:
                 fragment = new NewTicketFragment();
+                addFragment(fragment, id);
+                return true;*/
+            case R.id.drawer_offices:
+                fragment = new OfficeListFragment();
                 addFragment(fragment, id);
                 return true;
             case R.id.drawer_map:
@@ -123,7 +134,7 @@ public class MojeOkienko extends AppCompatActivity {
 
     private void setupFragment(){
         Fragment fragment = new NewTicketFragment();
-        addFragment(fragment, R.id.drawer_ticket);
+        addFragment(fragment, R.id.drawer_offices);
     }
 
     private void setupDrawer() {

@@ -16,23 +16,25 @@
         android:textSize="35sp" />
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="5dp"
-        android:orientation="vertical">
-        <TextView
-            android:singleLine="true"
-            android:id="@+id/txt_title"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="5dp">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="top"
             android:layout_alignParentTop="true"
-            android:textSize="20sp"/>
-        <TextView
-            android:id="@+id/txt_length"
-            android:layout_alignParentBottom="true"
-            android:gravity="bottom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"/>
+            android:orientation="vertical">
+            <TextView
+                android:singleLine="true"
+                android:id="@+id/txt_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"/>
+            <TextView
+                android:id="@+id/txt_length"
+                android:textColor="#666"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"/>
+        </LinearLayout>
     </RelativeLayout>
 </LinearLayout>
