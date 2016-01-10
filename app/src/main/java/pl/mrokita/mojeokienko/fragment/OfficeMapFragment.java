@@ -94,7 +94,6 @@ public class OfficeMapFragment extends Fragment implements Api.OnOfficesLoadedLi
                 OfficeMapFragment.this.hideFab();
             }
         });
-        new OfficesLoader(OfficeMapFragment.this).execute();
     }
 
     @Override
@@ -102,6 +101,7 @@ public class OfficeMapFragment extends Fragment implements Api.OnOfficesLoadedLi
         if(mMap == null)
             ((MojeOkienko) getActivity()).putMapToOfficeMapFragment(this, mCurrentMarkerId);
         mMap.onResume();
+        new OfficesLoader(OfficeMapFragment.this, OfficeMapFragment.this.mMap).execute();
         return mLayout;
     }
 

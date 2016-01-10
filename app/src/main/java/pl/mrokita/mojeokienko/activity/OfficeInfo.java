@@ -5,6 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +26,8 @@ import pl.mrokita.mojeokienko.adapter.OfficeInfoRVAdapter;
 
 public class OfficeInfo extends AppCompatActivity {
     Api.Office mOffice;
+    FloatingActionButton mFab;
+    AppBarLayout mAppBarLayout;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -30,7 +35,11 @@ public class OfficeInfo extends AppCompatActivity {
         Intent i = getIntent();
         mOffice = i.getExtras().getParcelable("office");
         setupToolbar();
-        getSupportActionBar().setTitle(mOffice.getName());
+        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout)
+                                                    findViewById(R.id.collapsing_toolbar);
+        collapsingToolbarLayout.setTitle(mOffice.getName());
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
         RecyclerView rv = (RecyclerView) findViewById(R.id.rv);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(new LinearLayoutManager(this));
@@ -43,6 +52,7 @@ public class OfficeInfo extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(mOffice.getName());
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
@@ -53,20 +63,24 @@ public class OfficeInfo extends AppCompatActivity {
         }
 
         protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
+            String url = urls[0];
+            Bitmap officePhoto;
             try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
+                InputStream in = new java.net.URL(url).openStream();
+                officePhoto = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
+                return null;
             }
-            return mIcon11;
+            return officePhoto;
         }
 
         protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
+            if(result != null) {
+                bmImage.setImageBitmap(result);
+                mAppBarLayout.setExpanded(true, true);
+            }
         }
     }
 

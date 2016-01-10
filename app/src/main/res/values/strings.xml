@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Moje Okienko</string>
 
+    <string name="preferences_internet_usage">Użycie połączenia</string>
+    <string name="preferences_load_office_photos">Ładuj zdjęcia urzędów</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="drawer_map">Mapa urzędów</string>
@@ -8,6 +10,8 @@
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
     <string name="drawer_offices">Urzędy</string>
+    <string name="drawer_ticket">Nowy numerek</string>
+    <string name="hint_number">Numer w kolejce</string>
     <string name="label_telefon">Telefon</string>
     <string name="label_adres">Adres</string>
     <string name="label_www">WWW</string>

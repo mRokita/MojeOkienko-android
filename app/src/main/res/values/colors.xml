@@ -11,4 +11,6 @@
     <color name="divider">#B6B6B6</color>
     <color name="background">#e7e7e7</color>
     <color name="info_list_item_onclick">#cccccc</color>
+    <color name="office_list_item_bg">#fff</color>
+    <color name="office_list_item_bg_onclick">#ddd</color>
 </resources>

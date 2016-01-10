@@ -107,11 +107,11 @@ public class MojeOkienko extends AppCompatActivity {
             mNavigationView.getMenu().findItem(id).setChecked(true);
         else
             mNavigationView.getMenu().findItem(mCurrentFragment).setChecked(true);
-        switch (id) {/*
+        switch (id) {
             case R.id.drawer_ticket:
                 fragment = new NewTicketFragment();
                 addFragment(fragment, id);
-                return true;*/
+                return true;
             case R.id.drawer_offices:
                 fragment = new OfficeListFragment();
                 addFragment(fragment, id);
@@ -130,11 +130,6 @@ public class MojeOkienko extends AppCompatActivity {
         }
 
         return false;
-    }
-
-    private void setupFragment(){
-        Fragment fragment = new NewTicketFragment();
-        addFragment(fragment, R.id.drawer_offices);
     }
 
     private void setupDrawer() {

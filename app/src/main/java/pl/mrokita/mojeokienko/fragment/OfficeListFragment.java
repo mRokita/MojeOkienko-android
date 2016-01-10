@@ -38,19 +38,18 @@ public class OfficeListFragment extends Fragment implements Api.OnOfficesLoadedL
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mContext = getActivity();
         setupRV();
-        new OfficesLoader(this).execute();
         return mRootView;
     }
 
     @Override
     public void onOfficesLoaded(List<Api.Office> offices) {
         mOfficeListRVAdapter.setOffices(offices);
-        mSwipeRefreshLayout.setRefreshing(false);
     }
     public class RecyclerViewSetUp implements Runnable {
         @Override
         public void run() {
             mRecyclerView.setAdapter(mOfficeListRVAdapter);
+            new OfficesLoader(OfficeListFragment.this, OfficeListFragment.this.mRootView, mSwipeRefreshLayout).execute();
         }
     }
     private void setupRV(){
@@ -63,6 +62,6 @@ public class OfficeListFragment extends Fragment implements Api.OnOfficesLoadedL
 
     @Override
     public void onRefresh() {
-        new OfficesLoader(this).execute();
+        new OfficesLoader(this, mRootView, mSwipeRefreshLayout).execute();
     }
 }

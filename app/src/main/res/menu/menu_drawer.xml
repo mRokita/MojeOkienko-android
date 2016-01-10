@@ -9,6 +9,11 @@
             android:title="@string/drawer_offices"/>
 
         <item
+            android:id="@+id/drawer_ticket"
+            android:icon="@drawable/ic_ticket_confirmation_grey600_24dp"
+            android:title="@string/drawer_ticket"/>
+
+        <item
             android:id="@+id/drawer_map"
             android:icon="@drawable/ic_map_marker_grey600_24dp"
             android:title="@string/drawer_map"/>

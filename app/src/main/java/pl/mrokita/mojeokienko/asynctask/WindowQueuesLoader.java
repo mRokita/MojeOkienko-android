@@ -1,26 +1,36 @@
 package pl.mrokita.mojeokienko.asynctask;
 
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.View;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import pl.mrokita.mojeokienko.Api;
 
 public class WindowQueuesLoader extends AsyncTask<String, Void, List<Api.WindowQueue>>{
-    private Api.OnWindowQueuesLoadedListener mListener;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private Api.OnWindowQueuesLoadedListener listener;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private View snackbarRoot;
 
-    public WindowQueuesLoader(Api.OnWindowQueuesLoadedListener listener, SwipeRefreshLayout swipeRefreshLayout){
-        this.mListener = listener;
-        this.mSwipeRefreshLayout = swipeRefreshLayout;
-        mSwipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
-            }
-        });
+    public WindowQueuesLoader(Api.OnWindowQueuesLoadedListener listener, View snackbarRoot){
+        this.listener = listener;
+        this.snackbarRoot = snackbarRoot;
+        this.swipeRefreshLayout = null;
+    }
+
+    public WindowQueuesLoader(Api.OnWindowQueuesLoadedListener listener, View snackbarRoot, SwipeRefreshLayout swipeRefreshLayout){
+        this.listener = listener;
+        this.swipeRefreshLayout = swipeRefreshLayout;
+        if(swipeRefreshLayout!=null)
+            this.swipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    WindowQueuesLoader.this.swipeRefreshLayout.setRefreshing(true);
+                }
+            });
+        this.snackbarRoot = snackbarRoot;
     }
 
     @Override
@@ -29,13 +39,21 @@ public class WindowQueuesLoader extends AsyncTask<String, Void, List<Api.WindowQ
             return Api.getWindowQueues(params[0]);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ArrayList<>();
+            Snackbar.make(snackbarRoot, "Nie można było pobrać informacji o kolejkach", Snackbar.LENGTH_LONG)
+                    .setAction("ODŚWIEŻ", new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v) {
+                            new WindowQueuesLoader(listener, snackbarRoot, swipeRefreshLayout).execute();
+                        }
+                    })
+                    .show();
+            return null;
         }
     }
 
     @Override
     protected void onPostExecute(List<Api.WindowQueue> windowQueues){
-        mListener.onWindowQueuesLoaded(windowQueues);
-        mSwipeRefreshLayout.setRefreshing(false);
+        listener.onWindowQueuesLoaded(windowQueues);
+        if(swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
     }
 }

@@ -2,7 +2,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="abc">
+        android:title="@string/preferences_internet_usage">
+        <CheckBoxPreference
+            android:title="@string/preferences_load_office_photos"
+            android:defaultValue="true"
+            android:key="loadOfficePhotos"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

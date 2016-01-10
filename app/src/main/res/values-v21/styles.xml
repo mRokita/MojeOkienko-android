@@ -10,6 +10,16 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="colorControlNormal">#c5c5c5</item>
+        <item name="colorControlHighlight">@color/primary</item>
     </style>
-
+    <style name="CollapsingToolbarTitle" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:typeface">sans</item>
+    </style>
+    <style name="HintTextStyle" parent="TextAppearance.Design.Hint">
+        <item name="android:textSize">20sp</item>
+    </style>
 </resources>

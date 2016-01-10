@@ -32,7 +32,7 @@ public class QueuesInfoRVAdapter extends RecyclerView.Adapter<QueuesInfoRVAdapte
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(
-                viewGroup.getContext()).inflate(R.layout.queue_list_item, viewGroup, false);
+                mContext).inflate(R.layout.queue_list_item, viewGroup, false);
         return new CustomViewHolder(view);
     }
 
@@ -47,7 +47,7 @@ public class QueuesInfoRVAdapter extends RecyclerView.Adapter<QueuesInfoRVAdapte
 
     @Override
     public int getItemCount() {
-        return (mWindowQueues==null || !isLocked) ? 0: mWindowQueues.size();
+        return (mWindowQueues==null || isLocked) ? 0: mWindowQueues.size();
     }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder{

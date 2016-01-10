@@ -1,6 +1,7 @@
 package pl.mrokita.mojeokienko.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import pl.mrokita.mojeokienko.Api;
 import pl.mrokita.mojeokienko.R;
+import pl.mrokita.mojeokienko.activity.OfficeInfo;
 
 /**
  * Created by mrokita on 19.12.15.
@@ -36,10 +38,25 @@ public class OfficeListRVAdapter extends RecyclerView.Adapter<OfficeListRVAdapte
         return new CustomViewHolder(view);
     }
 
+    private class OnClickIntent implements View.OnClickListener {
+        private Intent mIntent;
+        public OnClickIntent (Intent intent){
+            this.mIntent = intent;
+        }
+        @Override
+        public void onClick(View v) {
+            mContext.startActivity(mIntent);
+        }
+    }
+
     @Override
     public void onBindViewHolder(CustomViewHolder customViewHolder, int i) {
         Api.Office office = mOffices.get(i);
         customViewHolder.name.setText(office.getName());
+        Intent intent = new Intent(mContext, OfficeInfo.class);
+        intent.putExtra("office", mOffices.get(i));
+        customViewHolder.root.setOnClickListener(new OnClickIntent(intent));
+
     }
 
     @Override

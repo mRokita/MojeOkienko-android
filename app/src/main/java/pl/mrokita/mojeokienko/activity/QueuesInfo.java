@@ -42,7 +42,7 @@ public class QueuesInfo extends AppCompatActivity implements Api.OnWindowQueuesL
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new WindowQueuesLoader(QueuesInfo.this, mSwipeRefreshLayout).execute(mOfficeId);
+                new WindowQueuesLoader(QueuesInfo.this, mSwipeRefreshLayout, mSwipeRefreshLayout).execute(mOfficeId);
             }
         });
     }
