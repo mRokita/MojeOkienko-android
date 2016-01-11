@@ -20,6 +20,7 @@ import pl.mrokita.mojeokienko.R;
 import pl.mrokita.mojeokienko.fragment.NewTicketFragment;
 import pl.mrokita.mojeokienko.fragment.OfficeListFragment;
 import pl.mrokita.mojeokienko.fragment.OfficeMapFragment;
+import pl.mrokita.mojeokienko.service.TicketNotificationService;
 
 public class MojeOkienko extends AppCompatActivity {
     private final String STATE_FRAGMENT = "lastFragment";
@@ -38,6 +39,7 @@ public class MojeOkienko extends AppCompatActivity {
         setContentView(R.layout.activity_moje_okienko);
         mCurrentFragment = R.id.drawer_offices;
         String lastMarkerId = null;
+        startService(new Intent(this, TicketNotificationService.class));
         if(savedInstanceState!=null) {
             mCurrentFragment = savedInstanceState.getInt(STATE_FRAGMENT);
             lastMarkerId = savedInstanceState.getString(STATE_MARKER);

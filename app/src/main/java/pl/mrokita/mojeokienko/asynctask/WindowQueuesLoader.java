@@ -53,7 +53,8 @@ public class WindowQueuesLoader extends AsyncTask<String, Void, List<Api.WindowQ
 
     @Override
     protected void onPostExecute(List<Api.WindowQueue> windowQueues){
-        listener.onWindowQueuesLoaded(windowQueues);
+        if(windowQueues != null && listener!=null)
+            listener.onWindowQueuesLoaded(windowQueues);
         if(swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
     }
 }

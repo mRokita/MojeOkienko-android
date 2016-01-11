@@ -10,6 +10,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <service android:name="pl.mrokita.mojeokienko.service.TicketNotificationService" android:process=":remote"/>
         <activity
             android:name=".activity.MojeOkienko"
             android:label="@string/app_name"

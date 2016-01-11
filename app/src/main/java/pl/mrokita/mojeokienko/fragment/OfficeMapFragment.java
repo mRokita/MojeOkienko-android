@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,7 +102,8 @@ public class OfficeMapFragment extends Fragment implements Api.OnOfficesLoadedLi
         if(mMap == null)
             ((MojeOkienko) getActivity()).putMapToOfficeMapFragment(this, mCurrentMarkerId);
         mMap.onResume();
-        new OfficesLoader(OfficeMapFragment.this, OfficeMapFragment.this.mMap).execute();
+        if (mMarkerToOffice == null)
+            new OfficesLoader(OfficeMapFragment.this).execute();
         return mLayout;
     }
 
@@ -180,6 +182,17 @@ public class OfficeMapFragment extends Fragment implements Api.OnOfficesLoadedLi
 
     @Override
     public void onOfficesLoaded(List<Api.Office> offices) {
-        initMarkers(offices);
+        if(offices!=null)
+            initMarkers(offices);
+        else {
+            Snackbar.make(mMap, "Nie można było pobrać listy biur", Snackbar.LENGTH_LONG)
+                    .setAction("ODŚWIEŻ", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new OfficesLoader(OfficeMapFragment.this).execute();
+                        }
+                    })
+                    .show();
+        }
     }
 }

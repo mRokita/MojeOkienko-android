@@ -94,6 +94,64 @@ public class Api {
         }
     }
 
+    public static class TicketInfo implements Parcelable{
+        private int mCurrentNumber;
+        private int mAvgTime;
+        private String mOfficeId;
+        private int mClientCount;
+        private String mWindowLetter;
+        private String mWindowName;
+        private int mNumber;
+        private int mClientsBefore;
+        private int mTimeSpentOnCurrent;
+        private int mExpectedTimeLeft;
+        public TicketInfo(JSONObject data){
+            mCurrentNumber = getJsonInteger(data, "aktualnyNumer", null);
+            mAvgTime = getJsonInteger(data, "czasObslugi", null);
+            mOfficeId = getJsonString(data, "idUrzedu", null);
+            mClientCount = getJsonInteger(data, "liczbaKlwKolejce", null);
+            mWindowLetter = getJsonString(data, "literaGrupy", null);
+            mWindowName = getJsonString(data, "nazwaGrupy", null);
+            mNumber = getJsonInteger(data, "numerek", null);
+            mClientsBefore = getJsonInteger(data, "numerPrzed", null);
+            mTimeSpentOnCurrent = getJsonInteger(data, "timeSpentOnCurrent", null);
+            mExpectedTimeLeft = getJsonInteger(data, "zostaloCzasu", null);
+        }
+
+        public static final Parcelable.Creator<TicketInfo> CREATOR
+                = new Parcelable.Creator<TicketInfo>() {
+            public TicketInfo createFromParcel(Parcel in) {
+                return new TicketInfo(in);
+            }
+
+            public TicketInfo[] newArray(int size) {
+                return new TicketInfo[size];
+            }
+        };
+
+        public TicketInfo(Parcel in){
+            mCurrentNumber = in.readInt();
+            mAvgTime = in.readInt();
+            mOfficeId = in.readString();
+            mClientCount = in.readInt();
+            mWindowLetter = in.readString();
+            mWindowName = in.readString();
+            mNumber = in.readInt();
+            mClientsBefore = in.readInt();
+            mTimeSpentOnCurrent = in.readInt();
+            mExpectedTimeLeft = in.readInt();
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+
+        }
+    }
     public static class Office implements Parcelable {
         private String mId;
         private String mName;
