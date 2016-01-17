@@ -63,19 +63,46 @@ public class Api {
         return response.toString();
     }
 
-    public static class WindowQueue {
-        private Integer mCurrentNumber;
+    public static class WindowQueue implements Parcelable {
+        private int mCurrentNumber;
         private String mOfficeId;
         private String mWindowLetter;
         private String mWindowName;
-        private Integer mClientsInQueue;
+        private int mClientsInQueue;
         public WindowQueue(JSONObject data){
-            mCurrentNumber = getJsonInteger(data, "aktualnyNumer", null);
+            mCurrentNumber = getJsonInteger(data, "aktualnyNumer", -1);
             mOfficeId = getJsonString(data, "idUrzedu", null);
             mWindowLetter = getJsonString(data, "literaGrupy", null);
             mWindowName = getJsonString(data, "nazwaGrupy", null);
-            mClientsInQueue = getJsonInteger(data, "liczbaKlwKolejce", null);
+            mClientsInQueue = getJsonInteger(data, "liczbaKlwKolejce", -1);
         }
+
+        public WindowQueue(Parcel in){
+            mCurrentNumber = in.readInt();
+            mOfficeId = in.readString();
+            mWindowLetter = in.readString();
+            mWindowName = in.readString();
+            mClientsInQueue = in.readInt();
+        }
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(mCurrentNumber);
+            dest.writeString(mOfficeId);
+            dest.writeString(mWindowLetter);
+            dest.writeString(mWindowName);
+            dest.writeInt(mClientsInQueue);
+        }
+
+        public static final Parcelable.Creator<WindowQueue> CREATOR
+                = new Parcelable.Creator<WindowQueue>() {
+            public WindowQueue createFromParcel(Parcel in) {
+                return new WindowQueue(in);
+            }
+
+            public WindowQueue[] newArray(int size) {
+                return new WindowQueue[size];
+            }
+        };
 
         public Integer getCurrentNumber(){
             return mCurrentNumber;
@@ -92,6 +119,12 @@ public class Api {
         public Integer getClientsInQueue(){
             return mClientsInQueue;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
     }
 
     public static class TicketInfo implements Parcelable{
@@ -105,30 +138,40 @@ public class Api {
         private int mClientsBefore;
         private int mTimeSpentOnCurrent;
         private int mExpectedTimeLeft;
+
         public TicketInfo(JSONObject data){
-            mCurrentNumber = getJsonInteger(data, "aktualnyNumer", null);
-            mAvgTime = getJsonInteger(data, "czasObslugi", null);
+            mCurrentNumber = getJsonInteger(data, "aktualnyNumer", -1);
+            mAvgTime = getJsonInteger(data, "czasObslugi", -1);
+            if(mAvgTime == 0) mAvgTime = 3;
             mOfficeId = getJsonString(data, "idUrzedu", null);
-            mClientCount = getJsonInteger(data, "liczbaKlwKolejce", null);
+            mClientCount = getJsonInteger(data, "liczbaKlwKolejce", -1);
             mWindowLetter = getJsonString(data, "literaGrupy", null);
             mWindowName = getJsonString(data, "nazwaGrupy", null);
-            mNumber = getJsonInteger(data, "numerek", null);
-            mClientsBefore = getJsonInteger(data, "numerPrzed", null);
-            mTimeSpentOnCurrent = getJsonInteger(data, "timeSpentOnCurrent", null);
-            mExpectedTimeLeft = getJsonInteger(data, "zostaloCzasu", null);
+            mNumber = getJsonInteger(data, "numerek", -1);
+            mClientsBefore = getJsonInteger(data, "numeryPrzed", -1);
+            mTimeSpentOnCurrent = getJsonInteger(data, "timeSpentOnCurrent", -1);
+            mExpectedTimeLeft = getJsonInteger(data, "zostaloCzasu", -1);
         }
 
-        public static final Parcelable.Creator<TicketInfo> CREATOR
-                = new Parcelable.Creator<TicketInfo>() {
-            public TicketInfo createFromParcel(Parcel in) {
-                return new TicketInfo(in);
-            }
+        public TicketInfo(TicketInfo other){
+            mCurrentNumber = other.getCurrentNumber();
+            mAvgTime = other.getAvgTime();
+            mOfficeId = other.getOfficeId();
+            mClientCount = other.getClientCount();
+            mWindowLetter = other.getWindowLetter();
+            mWindowName = other.getWindowName();
+            mNumber = other.getNumber();
+            mClientsBefore = other.getClientsBefore();
+            mTimeSpentOnCurrent = other.getTimeSpentOnCurrent();
+            mExpectedTimeLeft = other.getExpectedTimeLeft();
+        }
 
-            public TicketInfo[] newArray(int size) {
-                return new TicketInfo[size];
-            }
-        };
-
+        public boolean equals(TicketInfo other){
+            return (other!=null &&
+                    mOfficeId.equals(other.getOfficeId()) &&
+                    mWindowLetter.equals(other.getWindowLetter()) &&
+                    mNumber == other.getNumber());
+        }
         public TicketInfo(Parcel in){
             mCurrentNumber = in.readInt();
             mAvgTime = in.readInt();
@@ -143,13 +186,63 @@ public class Api {
         }
 
         @Override
-        public int describeContents() {
-            return 0;
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(mCurrentNumber);
+            dest.writeInt(mAvgTime);
+            dest.writeString(mOfficeId);
+            dest.writeInt(mClientCount);
+            dest.writeString(mWindowLetter);
+            dest.writeString(mWindowName);
+            dest.writeInt(mNumber);
+            dest.writeInt(mClientsBefore);
+            dest.writeInt(mTimeSpentOnCurrent);
+            dest.writeInt(mExpectedTimeLeft);
+        }
+
+        public static final Parcelable.Creator<Api.TicketInfo> CREATOR
+                = new Parcelable.Creator<Api.TicketInfo>() {
+            public TicketInfo createFromParcel(Parcel in) {
+                return new TicketInfo(in);
+            }
+
+            public TicketInfo[] newArray(int size) {
+                return new TicketInfo[size];
+            }
+        };
+        public int getCurrentNumber(){
+            return mCurrentNumber;
+        }
+        public int getAvgTime(){
+            return mAvgTime;
+        }
+        public String getOfficeId(){
+            return mOfficeId;
+        }
+        public int getClientCount(){
+            return mClientCount;
+        }
+        public String getWindowLetter(){
+            return mWindowLetter;
+        }
+        public String getWindowName(){
+            return mWindowName;
+        }
+        public int getNumber(){
+            return mNumber;
+        }
+        public int getClientsBefore(){
+            return mClientsBefore;
+        }
+        public int getTimeSpentOnCurrent(){
+            return mTimeSpentOnCurrent;
+        }
+        public int getExpectedTimeLeft(){
+            return mExpectedTimeLeft;
         }
 
         @Override
-        public void writeToParcel(Parcel dest, int flags) {
-
+        public int describeContents() {
+            return 0;
         }
     }
     public static class Office implements Parcelable {
@@ -164,6 +257,8 @@ public class Api {
         private String mDescription;
         private String mImageUrl;
         private String mWebsite;
+        private int mClientCount;
+        private String mOpenTime;
         public Office(JSONObject data){
             mName = getJsonString(data, "name", null);
             mPhone = getJsonString(data, "phone", null);
@@ -175,6 +270,8 @@ public class Api {
             mDescription = getJsonString(data, "desc", null);
             mImageUrl = getJsonString(data, "img", null);
             mWebsite = getJsonString(data, "www", null);
+            mClientCount = getJsonInteger(data, "clientCount", 0);
+            mOpenTime = getJsonString(data, "openTime", "10:00 - 16:00");
         }
 
         public Office(Parcel in){
@@ -188,6 +285,8 @@ public class Api {
             mDescription = in.readString();
             mImageUrl = in.readString();
             mWebsite = in.readString();
+            mClientCount = in.readInt();
+            mOpenTime = in.readString();
         }
 
         public static final Parcelable.Creator<Office> CREATOR
@@ -216,6 +315,7 @@ public class Api {
         public String getPhone(){
             return mPhone;
         }
+        public int getClientCount(){ return mClientCount; }
         public String getDescription(){
             return mDescription;
         }
@@ -258,6 +358,8 @@ public class Api {
             dest.writeString(mDescription);
             dest.writeString(mImageUrl);
             dest.writeString(mWebsite);
+            dest.writeInt(mClientCount);
+            dest.writeString(mOpenTime);
         }
     }
 
@@ -267,6 +369,10 @@ public class Api {
 
     public interface OnOfficesLoadedListener{
         void onOfficesLoaded(List<Office> offices);
+    }
+
+    public static TicketInfo getTicketInfo(String officeId, String windowLetter, String ticketId) throws IOException, JSONException{
+        return new TicketInfo(new JSONObject(getResponse("getTicketInfo/"+officeId+"/"+windowLetter+"/"+ticketId)));
     }
 
     public static List<WindowQueue> getWindowQueues(String officeId) throws IOException, JSONException {
