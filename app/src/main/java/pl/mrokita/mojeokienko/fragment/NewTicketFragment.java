@@ -2,8 +2,10 @@ package pl.mrokita.mojeokienko.fragment;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -38,10 +40,18 @@ public class NewTicketFragment extends Fragment implements Api.OnOfficesLoadedLi
     private Spinner mOfficesSpinner;
     private List<Api.WindowQueue> mWindowQueues;
     private Api.Office mSelectedOffice;
-    private boolean mBound = false;
     private Messenger mService;
     private Api.WindowQueue mSelectedWindowQueue;
     private Spinner mWindowsSpinner;
+
+    public void setOffice(Api.Office office){
+        mSelectedOffice = office;
+    }
+
+    public void setWindowQueue(Api.WindowQueue windowQueue){
+        mSelectedWindowQueue = windowQueue;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState){
         getActivity().bindService(
@@ -49,10 +59,88 @@ public class NewTicketFragment extends Fragment implements Api.OnOfficesLoadedLi
                 mConnection, Context.BIND_AUTO_CREATE);
         super.onCreate(savedInstanceState);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         mRootView = inflater.inflate(R.layout.fragment_new_ticket, container, false);
         mOfficesSpinner = (Spinner) mRootView.findViewById(R.id.offices_spinner);
+        mWindowsSpinner = (Spinner) mRootView.findViewById(R.id.windows_spinner);
+        mWindowsSpinner = (Spinner) mRootView.findViewById(R.id.windows_spinner);
+        mTicketInput = (EditText) mRootView.findViewById(R.id.input_number);
+        if(mSelectedOffice == null)
+            setupOfficesSpiner();
+        else {
+            mOfficesSpinner.setVisibility(View.GONE);
+            mRootView.findViewById(R.id.spacer_offices).setVisibility(View.GONE);
+        }
+        if(mSelectedWindowQueue == null) {
+            setupWindowsSpinner();
+            if(mSelectedOffice != null)
+                new WindowQueuesLoader(NewTicketFragment.this, mRootView)
+                        .execute(mSelectedOffice.getId());
+        }
+        else {
+            mWindowsSpinner.setVisibility(View.GONE);
+            mRootView.findViewById(R.id.spacer_window_queues).setVisibility(View.GONE);
+        }
+
+        ((Button) mRootView.findViewById(R.id.button_submit)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: zrobić to ładniej, np. jakimś asynctaskiem lub lepiej zaimplementować wątek
+                new Thread() {
+                    private ProgressDialog progressDialog = null;
+                    private boolean canceled;
+
+                    public void run() {
+                        NewTicketFragment.this.getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog = new ProgressDialog(NewTicketFragment.this.getActivity());
+                                progressDialog.setTitle(R.string.loading_title);
+                                progressDialog.setMessage("Pobieranie informacji o numerku...");
+                                progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialog) {
+                                        canceled = true;
+                                    }
+                                });
+                                progressDialog.show();
+                            }
+                        });
+                        try {
+                            Api.TicketInfo ticketInfo = Api.getTicketInfo(mSelectedOffice.getId(),
+                                    mSelectedWindowQueue.getWindowLetter(),
+                                    mTicketInput.getText().toString());
+                            if (!canceled) {
+                                if (ticketInfo.getWindowName() == null) {
+                                    Snackbar.make(NewTicketFragment.this.mRootView,
+                                            "Podano nieprawidłowe dane", Snackbar.LENGTH_SHORT).show();
+                                } else {
+                                    Bundle b = new Bundle();
+                                    b.putParcelable("ticketInfo", ticketInfo);
+                                    sendMessage(Constants.ACTION.SET_NOTIFICATION, b);
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Snackbar.make(NewTicketFragment.this.mRootView,
+                                    "Sprawdź połączenie z internetem", Snackbar.LENGTH_SHORT).show();
+                        }
+                        NewTicketFragment.this.getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressDialog.hide();
+                            }
+                        });
+                    }
+                }.start();
+            }
+        });
+        return mRootView;
+    }
+
+    public void setupOfficesSpiner(){
         mOfficesSpinner.setEnabled(false);
         mOfficesSpinner.setClickable(false);
         Intent intent = new Intent(getActivity(), TicketNotificationService.class);
@@ -75,7 +163,10 @@ public class NewTicketFragment extends Fragment implements Api.OnOfficesLoadedLi
 
             }
         });
-        mWindowsSpinner = (Spinner) mRootView.findViewById(R.id.windows_spinner);
+        new OfficesLoader(this).execute();
+    }
+
+    public void setupWindowsSpinner(){
         mWindowsSpinner.setEnabled(false);
         mWindowsSpinner.setClickable(false);
         mWindowsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -92,16 +183,7 @@ public class NewTicketFragment extends Fragment implements Api.OnOfficesLoadedLi
 
             }
         });
-        mTicketInput = (EditText) mRootView.findViewById(R.id.input_number);
         mTicketInput.setEnabled(false);
-        ((Button) mRootView.findViewById(R.id.button_submit)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v){
-                sendMessage(Constants.ACTION.SET_NOTIFICATION, null);
-            }
-        });
-        new OfficesLoader(this).execute();
-        return mRootView;
     }
 
     @Override
@@ -146,7 +228,8 @@ public class NewTicketFragment extends Fragment implements Api.OnOfficesLoadedLi
         mWindowQueues = windowQueues;
         String[] labels = new String[mWindowQueues.size()];
         for(int i=0; i<mWindowQueues.size(); i++){
-            labels[i] = mWindowQueues.get(i).getWindowName();
+            Api.WindowQueue q = mWindowQueues.get(i);
+            labels[i] = q.getWindowLetter() + " - " + q.getWindowName();
         }
 
         mTicketInput.setEnabled(true);
@@ -167,13 +250,14 @@ public class NewTicketFragment extends Fragment implements Api.OnOfficesLoadedLi
             try {
                 mService.send(msg);
             } catch (RemoteException e) {
-
+                e.printStackTrace();
             };
         }
     }
+
     final Messenger mMessenger = new Messenger(new IncomingHandler());
 
-    class IncomingHandler extends Handler {
+    static class IncomingHandler extends Handler {
         @Override
         public void handleMessage(Message msg){
             switch(msg.what){
