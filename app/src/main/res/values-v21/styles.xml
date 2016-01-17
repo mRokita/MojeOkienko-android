@@ -10,8 +10,6 @@
         <item name="windowActionBar">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
         <item name="android:windowTranslucentStatus">true</item>
-        <item name="colorControlNormal">#c5c5c5</item>
-        <item name="colorControlHighlight">@color/primary</item>
     </style>
     <style name="CollapsingToolbarTitle" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
         <item name="android:textSize">20sp</item>
