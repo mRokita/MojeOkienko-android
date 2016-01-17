@@ -17,5 +17,5 @@ public class Constants {
         String LOAD_OFFICE_PHOTOS = "loadOfficePhotos";
         String NOTIFICATION_TIME = "notificationTime";
     }
-
+    public static String API_URL = "https://mrokita.pl/v/api/";
 }

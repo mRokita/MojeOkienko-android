@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Api {
-    public static final String API_URL = "https://mrokita.pl/v/api/";
+    public static final String API_URL = Constants.API_URL;
     private static String getJsonString(JSONObject obj, String key, String def){
         try {
             return obj.getString(key);
