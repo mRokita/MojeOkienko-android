@@ -8,5 +8,12 @@
             android:defaultValue="true"
             android:key="loadOfficePhotos"/>
     </PreferenceCategory>
-
+    <PreferenceCategory
+        android:title="@string/preferences_ticket_tracking">
+        <EditTextPreference
+            android:title="@string/preferences_notification_time"
+            android:defaultValue="4"
+            android:inputType="number"
+            android:key="notificationTime"/>
+    </PreferenceCategory>
 </PreferenceScreen>
