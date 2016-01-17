@@ -23,18 +23,31 @@
         </activity>
         <activity
             android:label="Ustawienia"
-            android:name=".activity.Preferences"
-            android:parentActivityName=".activity.MojeOkienko">
+            android:name=".activity.Preferences">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MojeOkienko" />
+        </activity>
+        <activity
+            android:label="Nowy numerek"
+            android:name=".activity.NewTicket">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.OfficeInfo" />
         </activity>
         <activity
             android:label="Kolejki"
-            android:name=".activity.QueuesInfo"
-            android:parentActivityName=".activity.MojeOkienko">
+            android:name=".activity.QueuesInfo">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MojeOkienko" />
         </activity>
         <activity
             android:label="Informacje o urzędzie dzielnicy"
-            android:name=".activity.OfficeInfo"
-            android:parentActivityName=".activity.MojeOkienko">
+            android:name=".activity.OfficeInfo">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MojeOkienko" />
         </activity>
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
