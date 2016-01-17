@@ -56,12 +56,14 @@ public class QueuesInfo extends AppCompatActivity implements Api.OnWindowQueuesL
     private void setupToolbar(){
         if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        else if(Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
+            findViewById(R.id.coordinator_layout).setFitsSystemWindows(true);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setTitle(getString(R.string.drawer_settings));
         View statusBar = findViewById(R.id.statusbar);
-        statusBar.setVisibility(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ?
+        statusBar.setVisibility(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT ?
                 View.VISIBLE : View.GONE);
     }
     @Override

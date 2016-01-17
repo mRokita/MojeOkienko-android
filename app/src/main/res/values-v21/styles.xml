@@ -9,7 +9,7 @@
         <item name="android:windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="android:windowTranslucentNavigation">false</item>
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
     </style>
     <style name="CollapsingToolbarTitle" parent="TextAppearance.Design.CollapsingToolbar.Expanded">
         <item name="android:textSize">20sp</item>
