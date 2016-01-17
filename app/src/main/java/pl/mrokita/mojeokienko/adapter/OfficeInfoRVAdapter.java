@@ -94,12 +94,12 @@ public class OfficeInfoRVAdapter extends RecyclerView.Adapter<OfficeInfoRVAdapte
                 intent.setData(Uri.parse(mOffice.getWebsite()));
                 break;
             case 3:
-                con = "10:00 - 18:00";
+                con = "10:00 - 16:00";
                 break;
             case 4:
-                con = "Łącznie 10 osób";
+                con = String.format("Łącznie %d osób", mOffice.getClientCount());
                 intent = new Intent(mContext, QueuesInfo.class);
-                intent.putExtra("officeId", mOffice.getId());
+                intent.putExtra("office", mOffice);
                 break;
         }
         if(intent!=null) {

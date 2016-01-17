@@ -25,15 +25,15 @@ public class QueuesInfo extends AppCompatActivity implements Api.OnWindowQueuesL
     private RecyclerView mRecyclerView;
     private QueuesInfoRVAdapter mQueuesInfoAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private String mOfficeId;
+    private Api.Office mOffice;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_queues_info);
         Intent i = getIntent();
-        mOfficeId = i.getStringExtra("officeId");
+        mOffice = i.getParcelableExtra("office");
         setupSwipeRefreshLayout();
-        new WindowQueuesLoader(this, mSwipeRefreshLayout).execute(mOfficeId);
+        new WindowQueuesLoader(this, mSwipeRefreshLayout).execute(mOffice.getId());
         setupRV();
         setupToolbar();
     }
@@ -42,14 +42,15 @@ public class QueuesInfo extends AppCompatActivity implements Api.OnWindowQueuesL
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new WindowQueuesLoader(QueuesInfo.this, mSwipeRefreshLayout, mSwipeRefreshLayout).execute(mOfficeId);
+                new WindowQueuesLoader(QueuesInfo.this, mSwipeRefreshLayout, mSwipeRefreshLayout)
+                        .execute(mOffice.getId());
             }
         });
     }
     private void setupRV(){
         mRecyclerView = (RecyclerView) findViewById(R.id.rv);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mQueuesInfoAdapter = new QueuesInfoRVAdapter(this);
+        mQueuesInfoAdapter = new QueuesInfoRVAdapter(this, mOffice);
         mRecyclerView.setAdapter(mQueuesInfoAdapter);
     }
     private void setupToolbar(){

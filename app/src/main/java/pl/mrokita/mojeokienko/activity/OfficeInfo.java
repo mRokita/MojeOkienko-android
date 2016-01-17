@@ -1,10 +1,12 @@
 package pl.mrokita.mojeokienko.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -16,15 +18,18 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import java.io.InputStream;
 
 import pl.mrokita.mojeokienko.Api;
+import pl.mrokita.mojeokienko.Constants;
 import pl.mrokita.mojeokienko.R;
 import pl.mrokita.mojeokienko.adapter.OfficeInfoRVAdapter;
 
 public class OfficeInfo extends AppCompatActivity {
+    SharedPreferences mPreferences;
     Api.Office mOffice;
     FloatingActionButton mFab;
     AppBarLayout mAppBarLayout;
@@ -32,6 +37,7 @@ public class OfficeInfo extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_office_info);
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         Intent i = getIntent();
         mOffice = i.getExtras().getParcelable("office");
         setupToolbar();
@@ -39,12 +45,21 @@ public class OfficeInfo extends AppCompatActivity {
                                                     findViewById(R.id.collapsing_toolbar);
         collapsingToolbarLayout.setTitle(mOffice.getName());
         mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OfficeInfo.this, NewTicket.class);
+                intent.putExtra("office", mOffice);
+                startActivity(intent);
+            }
+        });
         mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar_layout);
         RecyclerView rv = (RecyclerView) findViewById(R.id.rv);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(new OfficeInfoRVAdapter(this, mOffice));
-        new DownloadImageTask((ImageView) findViewById(R.id.img_header))
+        if(mPreferences.getBoolean(Constants.PREFERENCE.LOAD_OFFICE_PHOTOS, true))
+            new DownloadImageTask((ImageView) findViewById(R.id.img_header))
                 .execute(mOffice.getImageUrl());
     }
 

@@ -67,6 +67,7 @@ public class MojeOkienko extends AppCompatActivity {
     private void setupToolbar(){
         if(Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT)
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         View statusBar = findViewById(R.id.statusbar);
