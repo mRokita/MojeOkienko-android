@@ -17,7 +17,8 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.support.v7.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
+
 import android.util.Log;
 
 import org.json.JSONException;
@@ -62,7 +63,7 @@ public class TicketNotificationService extends Service {
                 case Constants.ACTION.SET_NOTIFICATION:
                     msg.getData().setClassLoader(Api.TicketInfo.class.getClassLoader());
                     mTicketInfo = data.getParcelable("ticketInfo");
-                    startNotifing();
+                    startNotifying();
                     break;
                 default:
                     super.handleMessage(msg);
@@ -149,7 +150,7 @@ public class TicketNotificationService extends Service {
         mNotificationManager.notify(Constants.NOTIFICATION_ID.REMINDER_NOTIFICATION, notification);
     }
 
-    public void startNotifing(){
+    public void startNotifying(){
         updateNotification();
         new Thread(){
             private final Api.TicketInfo ticketInfo = new Api.TicketInfo(mTicketInfo);
